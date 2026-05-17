@@ -1,0 +1,10 @@
+fastapi
+uvicorn[standard]
+sqlalchemy
+pydantic
+apscheduler
+pandas
+feedparser
+beautifulsoup4
+requests
+lxml
