@@ -1,0 +1,9 @@
+{% extends 'admin/base.html' %}
+{% block content %}
+    <h2>Scrape Sources</h2>
+    <ul>
+    {% for s in data %}
+        <li>{{ s.name }} ({{ s.kind }})</li>
+    {% endfor %}
+    </ul>
+{% endblock %}

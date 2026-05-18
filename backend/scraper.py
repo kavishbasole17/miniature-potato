@@ -1,7 +1,8 @@
 import requests
 from bs4 import BeautifulSoup
 from sqlalchemy.orm import Session
-from . import models, schemas
+from sqlalchemy.sql import func
+import models, schemas
 import time
 import re
 from datetime import datetime
@@ -250,8 +251,10 @@ def get_fallback_data():
 # Deduplicate and persist to DB
 # ─────────────────────────────────────────────────────────
 def store_opportunities(db: Session, opportunities: list):
+    import webhook
     added = 0
     seen = set()
+    new_opps = []
     for opp in opportunities:
         if not opp.source_link or opp.source_link in seen:
             continue
@@ -259,11 +262,16 @@ def store_opportunities(db: Session, opportunities: list):
             models.Opportunity.source_link == opp.source_link
         ).first()
         if not exists:
-            db.add(models.Opportunity(**opp.model_dump()))
+            db_opp = models.Opportunity(**opp.model_dump())
+            db.add(db_opp)
             seen.add(opp.source_link)
+            new_opps.append(db_opp)
             added += 1
     try:
         db.commit()
+        for opp in new_opps:
+            db.refresh(opp)
+        webhook.send_webhook(new_opps)
     except Exception as e:
         db.rollback()
         print(f"[DB] Commit error: {e}")
@@ -273,8 +281,16 @@ def store_opportunities(db: Session, opportunities: list):
 # ─────────────────────────────────────────────────────────
 # Main entry point
 # ─────────────────────────────────────────────────────────
-def run_scraper(db: Session) -> int:
+def run_scraper(db: Session, keyword: str = "", region: str = "") -> int:
     print(f"\n[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] ─── Starting scraper ───")
+    import json
+    from models import ImportLog
+    
+    log = ImportLog(trigger="manual", keyword=keyword, region=region)
+    db.add(log)
+    db.commit()
+    db.refresh(log)
+
     all_opps = []
 
     # Always add curated fallback first (guaranteed 40 entries)
@@ -291,6 +307,25 @@ def run_scraper(db: Session) -> int:
     time.sleep(1)
     all_opps.extend(scrape_techcrunch_rss())
 
+    # Optional filtering
+    if keyword or region:
+        filtered = []
+        for opp in all_opps:
+            keep = True
+            if keyword and keyword.lower() not in opp.title.lower() and keyword.lower() not in (opp.organizer or "").lower():
+                keep = False
+            if region and region.lower() not in (opp.location or "").lower():
+                keep = False
+            if keep:
+                filtered.append(opp)
+        all_opps = filtered
+
     added = store_opportunities(db, all_opps)
+    
+    log.ended_at = func.now()
+    log.insert_count = added
+    log.fetch_count = len(all_opps)
+    db.commit()
+
     print(f"[{datetime.now().strftime('%H:%M:%S')}] ─── Scraper done. Added {added} new items ───\n")
     return added

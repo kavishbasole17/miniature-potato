@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Startup Opportunities</title>
+    <script src="/static/theme.js"></script>
+    <style>
+        body { font-family: sans-serif; padding: 2rem; background: var(--bg-color); color: var(--text-color); }
+        :root[data-theme="light"] { --bg-color: #fff; --text-color: #000; }
+        :root[data-theme="dark"] { --bg-color: #1a1a1a; --text-color: #eee; }
+        .card { border: 1px solid #ccc; padding: 1rem; margin-bottom: 1rem; border-radius: 8px; }
+        .topbar { display: flex; justify-content: space-between; margin-bottom: 1rem; }
+    </style>
+</head>
+<body>
+    <div class="topbar">
+        <h1>Directory</h1>
+        <div>
+            {% if request.cookies.get("session_user") %}
+            <span>Welcome, {{ request.cookies.get("session_user") }}!</span>
+            <a href="/admin/opportunities">Admin</a>
+            <a href="/admin/logout">Sign Out</a>
+            {% else %}
+            <a href="/admin/login">Admin Login</a>
+            {% endif %}
+            <button onclick="toggleTheme()">Toggle Theme</button>
+        </div>
+    </div>
+    
+    <div>
+        {% for opp in data['items'] %}
+        <div class="card">
+            <h3>{{ opp.title }}</h3>
+            <p>{{ opp.type }} - {{ opp.organizer }}</p>
+            <a href="{{ opp.source_link }}" target="_blank">View</a>
+        </div>
+        {% endfor %}
+    </div>
+</body>
+</html>

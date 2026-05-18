@@ -1,0 +1,9 @@
+{% extends 'admin/base.html' %}
+{% block content %}
+    <h2>Opportunities</h2>
+    <ul>
+    {% for opp in data['items'] %}
+        <li>{{ opp.title }}</li>
+    {% endfor %}
+    </ul>
+{% endblock %}

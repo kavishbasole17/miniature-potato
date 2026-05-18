@@ -1,0 +1,9 @@
+{% extends 'admin/base.html' %}
+{% block content %}
+    <h2>Regions</h2>
+    <ul>
+    {% for r in data %}
+        <li>{{ r }}</li>
+    {% endfor %}
+    </ul>
+{% endblock %}

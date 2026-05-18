@@ -1,0 +1,30 @@
+{% extends 'admin/base.html' %}
+{% block content %}
+<h2>Import Logs</h2>
+<table border="1" cellpadding="8" cellspacing="0" style="width: 100%; border-collapse: collapse;">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Trigger</th>
+            <th>Started At</th>
+            <th>Ended At</th>
+            <th>Fetched</th>
+            <th>Added (New)</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for log in data %}
+        <tr>
+            <td>{{ log.id }}</td>
+            <td>{{ log.trigger }}</td>
+            <td>{{ log.started_at }}</td>
+            <td>{{ log.ended_at }}</td>
+            <td>{{ log.fetch_count }}</td>
+            <td>{{ log.insert_count }}</td>
+        </tr>
+    {% else %}
+        <tr><td colspan="6">No logs found.</td></tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
