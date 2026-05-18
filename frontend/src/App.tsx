@@ -3,7 +3,7 @@ import Dashboard from './Dashboard';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { API_BASE_URL } from './api';
-import { Lock, Database, Globe2, List, FileText, ArrowRight, User, MapPin, Calendar, Activity, Zap, Layers } from 'lucide-react';
+import { Lock, Database, Globe2, List, FileText, ArrowRight, User } from 'lucide-react';
 
 const AdminLayout = () => {
   const navigate = useNavigate();
