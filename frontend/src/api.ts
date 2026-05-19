@@ -23,4 +23,4 @@ export const triggerScrape = async () => {
   return data;
 };
 
-export const exportCsvUrl = `${API_BASE_URL}/api/export/csv`;
+export const exportCsvUrl = `${API_BASE_URL}/api/opportunities/export.csv`;
