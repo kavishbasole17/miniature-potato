@@ -72,3 +72,8 @@ The overall flow of data through the system follows a predictable lifecycle:
 
 ## 8. Conclusion
 The Startup Orbit platform represents a robust, self-sustaining architecture for data aggregation. By decoupling the automated data acquisition processes from the user-facing presentation layer, the system maintains high performance and reliability. The integration of resilient scraping techniques, structured relational data models, and a responsive frontend ensures a professional and efficient experience for both end-users and administrators.
+
+
+## 9. Sample Admin Credentials
+Username: admin
+Password: secret
